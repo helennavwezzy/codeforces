@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve() {
+    int n;
+    if (!(cin >> n)) return;
+
+    auto ask = [&](int u, int v) -> int {
+        cout << "? " << u << " " << v << '\n';
+        cout.flush();
+
+        int ans;
+        cin >> ans;
+
+        if (ans == -1) {
+            exit(0); // bắt buộc trong interactive
+        }
+        return ans;
+    };
+
+    // 1. Check {1,2,3}
+    if (ask(1, 2) == 1) {
+        cout << "! 1\n";
+        cout.flush();
+        return;
+    }
+    if (ask(2, 3) == 1) {
+        cout << "! 2\n";
+        cout.flush();
+        return;
+    }
+    if (ask(3, 1) == 1) {
+        cout << "! 3\n";
+        cout.flush();
+        return;
+    }
+
+    // 2. Check pairs
+    for (int i = 4; i < 2 * n; i += 2) {
+        if (ask(i, i + 1) == 1) {
+            cout << "! " << i << '\n';
+            cout.flush();
+            return;
+        }
+    }
+
+    // 3. Last element
+    cout << "! " << 2 * n << '\n';
+    cout.flush();
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
