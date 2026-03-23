@@ -1,0 +1,1 @@
+My Codeforce solution compilation
