@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 1000005;
+
+int max_limit[MAXN];
+int dp[MAXN];
+int z[MAXN];
+
+// Z-function trên substring s[start ... start+m-1]
+void compute_z(const string &s, int start, int m) {
+    z[0] = m;
+    int l = 0, r = 0;
+
+    for (int i = 1; i < m; i++) {
+        if (i < r)
+            z[i] = min(r - i, z[i - l]);
+        else
+            z[i] = 0;
+
+        while (i + z[i] < m && s[start + z[i]] == s[start + i + z[i]]) {
+            z[i]++;
+        }
+
+        if (i + z[i] > r) {
+            l = i;
+            r = i + z[i];
+        }
+    }
+}
+
+void solve() {
+    int n, q;
+    cin >> n >> q;
+
+    string s;
+    cin >> s;
+
+    while (q--) {
+        int l, r;
+        cin >> l >> r;
+        l--, r--;
+
+        int m = r - l + 1;
+
+        compute_z(s, l, m);
+
+        // reset max_limit
+        for (int i = 0; i <= m; i++) {
+            max_limit[i] = 0;
+        }
+
+        dp[1] = 1;
+        long long ans = 1;
+
+        for (int i = 2; i <= m; i++) {
+            int v_new = dp[i - 1];
+            int limit = i + z[i - 1] - 1;
+
+            if (limit > max_limit[v_new]) {
+                max_limit[v_new] = limit;
+            }
+
+            int v = dp[i - 1];
+
+            while (v >= 1 && max_limit[v] < i) {
+                v--;
+            }
+
+            dp[i] = v + 1;
+            ans += dp[i];
+        }
+
+        cout << ans << '\n';
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+    while (t--) solve();
+
+    return 0;
+}
