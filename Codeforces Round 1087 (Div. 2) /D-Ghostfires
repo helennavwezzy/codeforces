@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+static int seq[3000010];
+static char buf[3000010];
+
+void solve()
+{
+    int r, g, b;
+    cin >> r >> g >> b;
+
+    int cnt[3] = {r, g, b};
+    char ch[3] = {'R', 'G', 'B'};
+    int total = r + g + b;
+    int maxc = max({r, g, b});
+    int others = total - maxc;
+
+    int L;
+    if (maxc <= others + 1)
+        L = total;
+    else
+        L = 2 * others + 1;
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (cnt[i] == maxc)
+        {
+            cnt[i] = min(cnt[i], others + 1); // Đảm bảo không có giá trị NULL
+            break; // Chỉ dừng sau khi sửa giá trị
+        }
+    }
+
+    for (int i = 0; i < L; i++)
+    {
+        int last = (i >= 1) ? seq[i - 1] : -1;
+        int ago3 = (i >= 3) ? seq[i - 3] : -1;
+        int ago2 = (i >= 2) ? seq[i - 2] : -1;
+
+        int chosen = -1;
+        int bestCnt = -1;
+        bool bestAgo = false;
+
+        for (int c = 0; c < 3; c++)
+        {
+            if (cnt[c] == 0) continue;
+            if (c == last) continue;
+            if (c == ago3) continue;
+
+            bool agoMatch = (c == ago2);
+            bool better = false;
+
+            if (cnt[c] > bestCnt)
+                better = true;
+            else if (cnt[c] == bestCnt && agoMatch && !bestAgo)
+                better = true;
+
+            if (better)
+            {
+                chosen = c;
+                bestCnt = cnt[c];
+                bestAgo = agoMatch;
+            }
+        }
+
+        seq[i] = chosen;
+        cnt[chosen]--;
+    }
+
+    // Chuyển đổi kết quả thành chuỗi ký tự
+    for (int i = 0; i < L; i++)
+        buf[i] = ch[seq[i]];
+    buf[L] = '\n';
+
+    // Xuất kết quả
+    fwrite(buf, 1, L + 1, stdout);
+}
+
+int main()
+{
+    int t;
+    cin >> t;
+    while (t--)
+        solve();
+}
